@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#111111">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Glyph Matrix Toy"
+            android:textColor="#FFFFFF"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="12dp"/>
+
+        <TextView
+            android:id="@+id/currentAnimText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Current Animation: Pulse"
+            android:textColor="#FF8800"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:layout_marginBottom="24dp"/>
+
+        <Button
+            android:id="@+id/startBtn"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="▶ Start Glyph Matrix"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#E05A00"
+            android:layout_marginBottom="20dp"/>
+
+        <!-- ANIMATION BUTTONS -->
+
+        <Button
+            android:id="@+id/btn0"
+            style="@style/GlyphBtn"
+            android:text="⭕ Pulse"/>
+
+        <Button
+            android:id="@+id/btn1"
+            style="@style/GlyphBtn"
+            android:text="🕐 Spinner"/>
+
+        <Button
+            android:id="@+id/btn2"
+            style="@style/GlyphBtn"
+            android:text="🌧 Matrix Rain"/>
+
+        <Button
+            android:id="@+id/btn3"
+            style="@style/GlyphBtn"
+            android:text="❤️ Heartbeat"/>
+
+        <Button
+            android:id="@+id/btn4"
+            style="@style/GlyphBtn"
+            android:text="🟡 Pacman"/>
+
+        <Button
+            android:id="@+id/btn5"
+            style="@style/GlyphBtn"
+            android:text="👾 Space Invader"/>
+
+        <Button
+            android:id="@+id/btn6"
+            style="@style/GlyphBtn"
+            android:text="🌀 3D Tunnel"/>
+
+        <Button
+            android:id="@+id/btn7"
+            style="@style/GlyphBtn"
+            android:text="🧊 3D Cube"/>
+
+        <Button
+            android:id="@+id/btn8"
+            style="@style/GlyphBtn"
+            android:text="🌐 3D Sphere"/>
+
+        <Button
+            android:id="@+id/btn9"
+            style="@style/GlyphBtn"
+            android:text="🎵 Equalizer"/>
+
+        <Button
+            android:id="@+id/btn10"
+            style="@style/GlyphBtn"
+            android:text="🐍 Snake"/>
+
+        <Button
+            android:id="@+id/btn11"
+            style="@style/GlyphBtn"
+            android:text="🚀 Rocket"/>
+
+        <Button
+            android:id="@+id/btn12"
+            style="@style/GlyphBtn"
+            android:text="🕒 Clock"/>
+
+        <Button
+            android:id="@+id/btn13"
+            style="@style/GlyphBtn"
+            android:text="✨ Stars"/>
+
+        <Button
+            android:id="@+id/btn14"
+            style="@style/GlyphBtn"
+            android:text="🔥 Fire"/>
+
+        <Button
+            android:id="@+id/btn15"
+            style="@style/GlyphBtn"
+            android:text="⬜ Border Runner"/>
+
+        <Button
+            android:id="@+id/btn16"
+            style="@style/GlyphBtn"
+            android:text="🏀 Bouncing Ball"/>
+
+        <Button
+            android:id="@+id/btn17"
+            style="@style/GlyphBtn"
+            android:text="💫 Expanding Rings"/>
+
+        <Button
+            android:id="@+id/stopBtn"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="⏹ Stop Glyph Matrix"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#AA2222"
+            android:layout_marginTop="24dp"/>
+
+    </LinearLayout>
+
+</ScrollView>
