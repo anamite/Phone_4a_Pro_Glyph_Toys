@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/nothing_black">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Music Sync Module -->
+        <com.google.android.material.card.MaterialCardView
+            style="@style/NothingCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/music_sync"
+                    android:textColor="@color/nothing_white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.1"
+                    android:layout_marginBottom="8dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/music_sync_desc"
+                    android:textColor="@color/nothing_grey_4"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="16dp"/>
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/musicSyncSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/enable_sync"
+                    android:textColor="@color/nothing_white"
+                    app:thumbTint="@color/nothing_accent"
+                    app:trackTint="@color/nothing_grey_3" />
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:scrollbars="none">
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/musicAnimChipGroup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:singleSelection="true"
+                        app:selectionRequired="true">
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipBars"
+                            style="@style/Widget.Material3.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Bars"
+                            android:textColor="@color/nothing_white"
+                            app:chipBackgroundColor="@color/nothing_grey_2" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipSphere"
+                            style="@style/Widget.Material3.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Sphere"
+                            android:textColor="@color/nothing_white"
+                            app:chipBackgroundColor="@color/nothing_grey_2" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipRipple"
+                            style="@style/Widget.Material3.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Ripple"
+                            android:textColor="@color/nothing_white"
+                            app:chipBackgroundColor="@color/nothing_grey_2" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipVortex"
+                            style="@style/Widget.Material3.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Vortex"
+                            android:textColor="@color/nothing_white"
+                            app:chipBackgroundColor="@color/nothing_grey_2" />
+
+                    </com.google.android.material.chip.ChipGroup>
+                </HorizontalScrollView>
+
+                <LinearLayout
+                    android:id="@+id/musicAdvancedSettings"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="16dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sensitivity"
+                        android:textColor="@color/nothing_grey_4"
+                        android:textSize="12sp"
+                        android:layout_marginBottom="4dp"/>
+
+                    <com.google.android.material.slider.Slider
+                        android:id="@+id/musicSensitivitySlider"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:valueFrom="0.1"
+                        android:valueTo="5.0"
+                        android:value="1.0"
+                        app:thumbColor="@color/nothing_accent"
+                        app:trackColorActive="@color/nothing_accent"
+                        app:trackColorInactive="@color/nothing_grey_2" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Intensity"
+                        android:textColor="@color/nothing_grey_4"
+                        android:textSize="12sp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="4dp"/>
+
+                    <com.google.android.material.slider.Slider
+                        android:id="@+id/musicIntensitySlider"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:valueFrom="0.1"
+                        android:valueTo="3.0"
+                        android:value="1.0"
+                        app:thumbColor="@color/nothing_accent"
+                        app:trackColorActive="@color/nothing_accent"
+                        app:trackColorInactive="@color/nothing_grey_2" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/musicAdvancedToggle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Advanced Settings ▼"
+                    android:textColor="@color/nothing_accent"
+                    android:textSize="14sp"
+                    android:paddingTop="12dp"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Timer Module -->
+        <com.google.android.material.card.MaterialCardView
+            style="@style/NothingCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/glyph_timer"
+                    android:textColor="@color/nothing_white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.1"
+                    android:layout_marginBottom="8dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/glyph_timer_desc"
+                    android:textColor="@color/nothing_grey_4"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="16dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="16dp">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="@string/min"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        app:hintTextColor="@color/nothing_accent"
+                        app:boxStrokeColor="@color/nothing_accent">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/timerMinInput"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="number"
+                            android:textColor="@color/nothing_white"
+                            android:text="0"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=":"
+                        android:textColor="@color/nothing_white"
+                        android:textSize="24sp"
+                        android:layout_marginHorizontal="8dp"/>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="@string/sec"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        app:hintTextColor="@color/nothing_accent"
+                        app:boxStrokeColor="@color/nothing_accent">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/timerSecInput"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="number"
+                            android:textColor="@color/nothing_white"
+                            android:text="30"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/timerActionBtn"
+                    style="@style/NothingButton.Accent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/start_timer" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+</ScrollView>

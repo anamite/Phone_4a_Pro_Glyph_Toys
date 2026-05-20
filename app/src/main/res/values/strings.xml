@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">GlyphGifToy</string>
+    <string name="music_sync">MUSIC SYNC</string>
+    <string name="music_sync_desc">Sync Glyph matrix with playing audio using Android Visualizer.</string>
+    <string name="enable_sync">Enable Sync</string>
+    <string name="glyph_timer">GLYPH TIMER</string>
+    <string name="glyph_timer_desc">Visual countdown timer on the Glyph matrix.</string>
+    <string name="min">MIN</string>
+    <string name="sec">SEC</string>
+    <string name="start_timer">START TIMER</string>
+    <string name="stop_timer">STOP TIMER</string>
 </resources>
