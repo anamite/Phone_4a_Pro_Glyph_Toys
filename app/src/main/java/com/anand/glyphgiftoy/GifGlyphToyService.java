@@ -157,9 +157,9 @@ public class GifGlyphToyService extends Service {
                 }
             }, Visualizer.getMaxCaptureRate() / 2, false, true);
             mVisualizer.setEnabled(true);
-            Log.d("GifGlyphToyService", "Visualizer initialized successfully with capture size: " + captureSize);
+            Log.d("GlyphMoService", "Visualizer initialized successfully with capture size: " + captureSize);
         } catch (Exception e) {
-            Log.e("GifGlyphToyService", "Error starting visualizer", e);
+            Log.e("GlyphMoService", "Error starting visualizer", e);
             mVisualizer = null;
         }
     }
@@ -300,7 +300,7 @@ public class GifGlyphToyService extends Service {
         NotificationChannel ch =
                 new NotificationChannel(
                         CHANNEL_ID,
-                        "Glyph Toy",
+                        "Glyph Mo",
                         NotificationManager.IMPORTANCE_LOW
                 );
 
@@ -309,8 +309,8 @@ public class GifGlyphToyService extends Service {
                 .createNotificationChannel(ch);
 
         return new Notification.Builder(this, CHANNEL_ID)
-                .setContentTitle("Glyph Matrix Running")
-                .setContentText("Tap to switch animations")
+                .setContentTitle("Glyph Mo Active")
+                .setContentText("Controlling your Glyph Matrix")
                 .setSmallIcon(android.R.drawable.ic_dialog_info)
                 .build();
     }

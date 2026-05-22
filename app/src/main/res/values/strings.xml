@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GlyphGifToy</string>
+    <string name="app_name">Glyph Mo</string>
     <string name="music_sync">MUSIC SYNC</string>
     <string name="music_sync_desc">Sync Glyph matrix with playing audio using Android Visualizer.</string>
     <string name="enable_sync">Enable Sync</string>
