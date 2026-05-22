@@ -27,6 +27,7 @@ public class GlyphNotificationListenerService extends NotificationListenerServic
         Intent intent = new Intent(this, GifGlyphToyService.class);
         intent.setAction(GifGlyphToyService.ACTION_TRIGGER_OVERRIDE);
         intent.putExtra(GifGlyphToyService.EXTRA_ANIM_INDEX, rule.getAnimationIndex());
+        intent.putExtra(GifGlyphToyService.EXTRA_CUSTOM_ANIM_ID, rule.getCustomAnimationId());
         intent.putExtra(GifGlyphToyService.EXTRA_DURATION_SEC, rule.getDurationSec());
         intent.putExtra(GifGlyphToyService.EXTRA_BRIGHTNESS, rule.getBrightness());
         intent.putExtra(GifGlyphToyService.EXTRA_SCALE, rule.getScale());

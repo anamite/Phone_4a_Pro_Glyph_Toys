@@ -15,7 +15,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.anand.glyphgiftoy.R;
+import com.anand.glyphgiftoy.data.CustomAnimationManager;
 import com.anand.glyphgiftoy.data.RuleManager;
+import com.anand.glyphgiftoy.models.CustomAnimation;
 import com.anand.glyphgiftoy.models.GlyphRule;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,6 +29,7 @@ public class AddRuleActivity extends AppCompatActivity {
     private SeekBar durationSeekBar, brightnessSeekBar;
     private TextView durationLabel, brightnessLabel;
     private List<AppInfo> installedApps;
+    private List<AnimationOption> animationOptions;
 
     private final String[] animNames = {
             "Pulse", "Spinner", "Matrix Rain", "Heartbeat", "Pacman", "Space Invader",
@@ -93,7 +96,18 @@ public class AddRuleActivity extends AppCompatActivity {
         appAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         appSpinner.setAdapter(appAdapter);
 
-        ArrayAdapter<String> animAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, animNames);
+        animationOptions = new ArrayList<>();
+        // Add built-in animations
+        for (int i = 0; i < animNames.length; i++) {
+            animationOptions.add(new AnimationOption(animNames[i], i, null));
+        }
+        // Add custom animations
+        List<CustomAnimation> customAnims = CustomAnimationManager.getInstance(this).getAnimations();
+        for (CustomAnimation anim : customAnims) {
+            animationOptions.add(new AnimationOption(anim.getName() + " (Custom)", -1, anim.getId()));
+        }
+
+        ArrayAdapter<AnimationOption> animAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, animationOptions);
         animAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         animSpinner.setAdapter(animAdapter);
     }
@@ -120,17 +134,42 @@ public class AddRuleActivity extends AppCompatActivity {
 
     private void saveRule() {
         AppInfo selectedApp = (AppInfo) appSpinner.getSelectedItem();
-        int animIndex = animSpinner.getSelectedItemPosition();
+        AnimationOption selectedAnim = (AnimationOption) animSpinner.getSelectedItem();
         int duration = durationSeekBar.getProgress();
         int brightness = brightnessSeekBar.getProgress();
 
         if (duration == 0) duration = 1;
 
-        GlyphRule rule = new GlyphRule(selectedApp.packageName, selectedApp.name, animIndex, duration, brightness, 100);
+        GlyphRule rule = new GlyphRule(
+                selectedApp.packageName,
+                selectedApp.name,
+                selectedAnim.index,
+                selectedAnim.customId,
+                duration,
+                brightness,
+                100
+        );
         RuleManager.getInstance(this).addRule(rule);
 
         Toast.makeText(this, "Rule added for " + selectedApp.name, Toast.LENGTH_SHORT).show();
         finish();
+    }
+
+    private static class AnimationOption {
+        String name;
+        int index;
+        String customId;
+
+        AnimationOption(String name, int index, String customId) {
+            this.name = name;
+            this.index = index;
+            this.customId = customId;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
     }
 
     private static class AppInfo {

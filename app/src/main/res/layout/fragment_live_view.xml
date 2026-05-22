@@ -68,15 +68,31 @@
             android:orientation="vertical"
             android:padding="24dp">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="ANIMATIONS"
-                android:textColor="@color/nothing_grey_4"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:letterSpacing="0.2"
-                android:layout_marginBottom="16dp"/>
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:letterSpacing="0.2"
+                    android:text="ANIMATIONS"
+                    android:textColor="@color/nothing_grey_4"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/importBtn"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:text="IMPORT"
+                    android:textColor="@color/nothing_white"
+                    android:textSize="12sp" />
+            </RelativeLayout>
 
             <LinearLayout
                 android:id="@+id/animList"

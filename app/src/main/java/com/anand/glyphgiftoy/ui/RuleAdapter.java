@@ -12,6 +12,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.anand.glyphgiftoy.R;
+import com.anand.glyphgiftoy.data.CustomAnimationManager;
+import com.anand.glyphgiftoy.models.CustomAnimation;
 import com.anand.glyphgiftoy.models.GlyphRule;
 import java.util.List;
 
@@ -19,6 +21,7 @@ public class RuleAdapter extends RecyclerView.Adapter<RuleAdapter.ViewHolder> {
 
     private List<GlyphRule> rules;
     private OnDeleteClickListener deleteListener;
+    private CustomAnimationManager customAnimManager;
     private final String[] animNames = {
             "Pulse", "Spinner", "Matrix Rain", "Heartbeat", "Pacman", "Space Invader",
             "3D Tunnel", "3D Cube", "3D Sphere", "Equalizer", "Snake", "Rocket",
@@ -46,7 +49,23 @@ public class RuleAdapter extends RecyclerView.Adapter<RuleAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         GlyphRule rule = rules.get(position);
         holder.appName.setText(rule.getAppName());
-        holder.ruleDetails.setText(animNames[rule.getAnimationIndex()] + " (" + rule.getDurationSec() + "s)");
+        
+        String animName = "Unknown";
+        if (rule.getCustomAnimationId() != null) {
+            if (customAnimManager == null) {
+                customAnimManager = CustomAnimationManager.getInstance(holder.itemView.getContext());
+            }
+            CustomAnimation anim = customAnimManager.getAnimation(rule.getCustomAnimationId());
+            if (anim != null) {
+                animName = anim.getName() + " (Custom)";
+            } else {
+                animName = "Deleted Custom Anim";
+            }
+        } else if (rule.getAnimationIndex() >= 0 && rule.getAnimationIndex() < animNames.length) {
+            animName = animNames[rule.getAnimationIndex()];
+        }
+        
+        holder.ruleDetails.setText(animName + " (" + rule.getDurationSec() + "s)");
 
         try {
             Drawable icon = holder.itemView.getContext().getPackageManager().getApplicationIcon(rule.getPackageName());

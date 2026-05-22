@@ -51,4 +51,11 @@
         <item name="android:textAllCaps">true</item>
         <item name="android:letterSpacing">0.1</item>
     </style>
+
+    <style name="NothingTitleText" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:fontFamily">@font/ndot57</item>
+        <item name="fontFamily">@font/ndot57</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:letterSpacing">0.05</item>
+    </style>
 </resources>

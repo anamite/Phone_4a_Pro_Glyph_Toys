@@ -3,6 +3,7 @@ package com.anand.glyphgiftoy;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -13,9 +14,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -30,15 +39,23 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.anand.glyphgiftoy.data.CustomAnimationManager;
 import com.anand.glyphgiftoy.data.RuleManager;
+import com.anand.glyphgiftoy.models.CustomAnimation;
 import com.anand.glyphgiftoy.ui.AddRuleActivity;
 import com.anand.glyphgiftoy.ui.PixelMatrixView;
 import com.anand.glyphgiftoy.ui.RuleAdapter;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -247,7 +264,9 @@ public class MainActivity extends AppCompatActivity {
         private Handler handler = new Handler(Looper.getMainLooper());
         private int tick = 0;
         private boolean isResumed = false;
-        private RadioButton[] radioButtons;
+        private List<RadioButton> radioButtons = new ArrayList<>();
+        private ViewGroup animListContainer;
+        private String selectedCustomId = null;
 
         private final String[] animNames = {
                 "Pulse", "Spinner", "Matrix Rain", "Heartbeat", "Pacman", "Space Invader",
@@ -256,12 +275,43 @@ public class MainActivity extends AppCompatActivity {
                 "Gradient Disc"
         };
         private ActivityResultLauncher<String> permissionLauncher;
+        private ActivityResultLauncher<String> jsonFilePickerLauncher;
+
+        @Override
+        public void onAttach(@NonNull android.content.Context context) {
+            super.onAttach(context);
+            jsonFilePickerLauncher = registerForActivityResult(
+                    new ActivityResultContracts.GetContent(),
+                    uri -> {
+                        if (uri != null) {
+                            try {
+                                InputStream inputStream = context.getContentResolver().openInputStream(uri);
+                                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                                StringBuilder stringBuilder = new StringBuilder();
+                                String line;
+                                while ((line = reader.readLine()) != null) {
+                                    stringBuilder.append(line);
+                                }
+                                inputStream.close();
+                                String json = stringBuilder.toString();
+                                CustomAnimation anim = new Gson().fromJson(json, CustomAnimation.class);
+                                if (anim != null) {
+                                    showSaveDialog(anim);
+                                }
+                            } catch (Exception e) {
+                                Toast.makeText(getContext(), "Error reading file", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+            );
+        }
 
         @Nullable
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             View v = inflater.inflate(R.layout.fragment_live_view, container, false);
             pixelMatrixView = v.findViewById(R.id.pixelMatrixView);
+            animListContainer = v.findViewById(R.id.animList);
 
             permissionLauncher = registerForActivityResult(
                     new ActivityResultContracts.RequestPermission(),
@@ -270,34 +320,140 @@ public class MainActivity extends AppCompatActivity {
 
             v.findViewById(R.id.startBtn).setOnClickListener(view -> requestAndStart());
             v.findViewById(R.id.stopBtn).setOnClickListener(view -> stopGlyph());
+            v.findViewById(R.id.importBtn).setOnClickListener(view -> jsonFilePickerLauncher.launch("application/json"));
 
-            ViewGroup list = v.findViewById(R.id.animList);
-            radioButtons = new RadioButton[animNames.length];
-
-            for (int i = 0; i < animNames.length; i++) {
-                View itemView = inflater.inflate(R.layout.item_animation, list, false);
-                TextView nameText = itemView.findViewById(R.id.animNameText);
-                RadioButton rb = itemView.findViewById(R.id.animRadioButton);
-
-                nameText.setText(animNames[i]);
-                radioButtons[i] = rb;
-
-                int index = i;
-                itemView.setOnClickListener(view -> {
-                    GifGlyphToyService.selectedAnimation = index;
-                    updateRadioButtons(index);
-                    startGlyph();
-                });
-                list.addView(itemView);
-            }
+            refreshAnimationList(inflater);
 
             return v;
         }
 
-        private void updateRadioButtons(int selectedIndex) {
-            for (int i = 0; i < radioButtons.length; i++) {
-                if (radioButtons[i] != null) {
-                    radioButtons[i].setChecked(i == selectedIndex);
+        private void refreshAnimationList(LayoutInflater inflater) {
+            animListContainer.removeAllViews();
+            radioButtons.clear();
+
+            // Default animations
+            for (int i = 0; i < animNames.length; i++) {
+                View itemView = inflater.inflate(R.layout.item_animation, animListContainer, false);
+                TextView nameText = itemView.findViewById(R.id.animNameText);
+                RadioButton rb = itemView.findViewById(R.id.animRadioButton);
+
+                nameText.setText(animNames[i]);
+                radioButtons.add(rb);
+
+                int index = i;
+                itemView.setOnClickListener(view -> {
+                    GifGlyphToyService.selectedAnimation = index;
+                    GifGlyphToyService.activeCustomAnimation = null;
+                    selectedCustomId = null;
+                    updateRadioButtons(index, null);
+                    startGlyph();
+                });
+                animListContainer.addView(itemView);
+            }
+
+            // Custom animations
+            List<CustomAnimation> customAnims = CustomAnimationManager.getInstance(getContext()).getAnimations();
+            if (!customAnims.isEmpty()) {
+                View divider = new View(getContext());
+                divider.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 2));
+                divider.setBackgroundColor(getResources().getColor(R.color.nothing_grey_2, null));
+                animListContainer.addView(divider);
+
+                TextView customHeader = new TextView(getContext());
+                customHeader.setText("CUSTOM");
+                customHeader.setPadding(0, 32, 0, 16);
+                customHeader.setTextColor(getResources().getColor(R.color.nothing_grey_4, null));
+                customHeader.setTextSize(12);
+                customHeader.setLetterSpacing(0.2f);
+                animListContainer.addView(customHeader);
+
+                for (CustomAnimation anim : customAnims) {
+                    View itemView = inflater.inflate(R.layout.item_animation, animListContainer, false);
+                    TextView nameText = itemView.findViewById(R.id.animNameText);
+                    RadioButton rb = itemView.findViewById(R.id.animRadioButton);
+
+                    nameText.setText(anim.getName());
+                    radioButtons.add(rb);
+
+                    itemView.setOnClickListener(view -> {
+                        GifGlyphToyService.activeCustomAnimation = anim;
+                        selectedCustomId = anim.getId();
+                        updateRadioButtons(-1, anim.getId());
+                        startGlyph();
+                    });
+
+                    itemView.setOnLongClickListener(view -> {
+                        new MaterialAlertDialogBuilder(getContext())
+                                .setTitle("Delete Animation")
+                                .setMessage("Are you sure you want to delete '" + anim.getName() + "'?")
+                                .setPositiveButton("Delete", (dialog, which) -> {
+                                    CustomAnimationManager.getInstance(getContext()).deleteAnimation(anim.getId());
+                                    if (anim.getId().equals(selectedCustomId)) {
+                                        GifGlyphToyService.activeCustomAnimation = null;
+                                        selectedCustomId = null;
+                                        GifGlyphToyService.selectedAnimation = 0;
+                                    }
+                                    refreshAnimationList(inflater);
+                                })
+                                .setNegativeButton("Cancel", null)
+                                .show();
+                        return true;
+                    });
+                    animListContainer.addView(itemView);
+                }
+            }
+            updateRadioButtons(GifGlyphToyService.selectedAnimation, selectedCustomId);
+        }
+
+        private void showSaveDialog(CustomAnimation anim) {
+            final TextInputEditText input = new TextInputEditText(getContext());
+            input.setText(anim.getName());
+            input.setHint("Animation Name");
+
+            LinearLayout container = new LinearLayout(getContext());
+            container.setOrientation(LinearLayout.VERTICAL);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            int margin = (int) (16 * getResources().getDisplayMetrics().density);
+            lp.setMargins(margin, margin, margin, margin);
+            input.setLayoutParams(lp);
+            container.addView(input);
+
+            new MaterialAlertDialogBuilder(getContext())
+                    .setTitle("Save Custom Animation")
+                    .setView(container)
+                    .setPositiveButton("Save", (dialog, which) -> {
+                        String name = Objects.requireNonNull(input.getText()).toString();
+                        if (name.isEmpty()) {
+                            Toast.makeText(getContext(), "Name cannot be empty", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        anim.setName(name);
+                        CustomAnimationManager.getInstance(getContext()).addAnimation(anim);
+                        refreshAnimationList(LayoutInflater.from(getContext()));
+                        Toast.makeText(getContext(), "Animation saved: " + name, Toast.LENGTH_SHORT).show();
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
+        }
+
+        private void updateRadioButtons(int selectedIndex, String customId) {
+            // This is a bit tricky because we mixed default and custom
+            // But we can just re-read the UI state if needed, or index properly
+            int total = animNames.length;
+            List<CustomAnimation> customAnims = CustomAnimationManager.getInstance(getContext()).getAnimations();
+            
+            for (int i = 0; i < animNames.length; i++) {
+                if (i < radioButtons.size())
+                    radioButtons.get(i).setChecked(i == selectedIndex && customId == null);
+            }
+
+            for (int i = 0; i < customAnims.size(); i++) {
+                int rbIndex = animNames.length + i;
+                if (rbIndex < radioButtons.size()) {
+                    radioButtons.get(rbIndex).setChecked(customAnims.get(i).getId().equals(customId));
                 }
             }
         }
@@ -306,7 +462,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if (!isResumed) return;
-                pixelMatrixView.setFrame(animGen.getFrame(GifGlyphToyService.selectedAnimation, tick++));
+                Bitmap frame;
+                if (GifGlyphToyService.activeCustomAnimation != null) {
+                    frame = animGen.renderCustom(GifGlyphToyService.activeCustomAnimation, tick++);
+                } else {
+                    frame = animGen.getFrame(GifGlyphToyService.selectedAnimation, tick++);
+                }
+                pixelMatrixView.setFrame(frame);
                 handler.postDelayed(this, 50);
             }
         };
@@ -315,7 +477,7 @@ public class MainActivity extends AppCompatActivity {
         public void onResume() {
             super.onResume();
             isResumed = true;
-            updateRadioButtons(GifGlyphToyService.selectedAnimation);
+            refreshAnimationList(LayoutInflater.from(getContext()));
             handler.post(animRunnable);
         }
 

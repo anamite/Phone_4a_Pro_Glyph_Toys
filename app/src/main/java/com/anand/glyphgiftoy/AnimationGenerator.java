@@ -6,6 +6,10 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.SweepGradient;
+import com.anand.glyphgiftoy.models.CustomAnimation;
+import com.anand.glyphgiftoy.models.CustomAnimationFrame;
+import com.anand.glyphgiftoy.models.DrawCommand;
+import java.util.List;
 
 public class AnimationGenerator {
     public static final int SIZE = 13;
@@ -541,6 +545,56 @@ public class AnimationGenerator {
         float dotY = cy + (float)Math.sin(rad) * radius;
         c.drawCircle(dotX, dotY, 1.0f, p);
 
+        return bmp;
+    }
+
+    public Bitmap renderCustom(CustomAnimation anim, int tick) {
+        Bitmap bmp = createBitmap();
+        if (anim == null || anim.getFrames() == null || anim.getFrames().isEmpty()) return bmp;
+
+        Canvas c = new Canvas(bmp);
+        Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+        int frameIndex = tick % anim.getFrameCount();
+        if (frameIndex >= anim.getFrames().size()) frameIndex = 0;
+
+        CustomAnimationFrame frame = anim.getFrames().get(frameIndex);
+        for (DrawCommand cmd : frame.getCommands()) {
+            p.reset();
+            p.setAntiAlias(true);
+            try {
+                p.setColor(Color.parseColor(cmd.getColor()));
+            } catch (Exception e) {
+                p.setColor(Color.WHITE);
+            }
+            float[] params = cmd.getParams();
+
+            switch (cmd.getAction().toLowerCase()) {
+                case "clear":
+                    c.drawColor(p.getColor());
+                    break;
+                case "rect":
+                    if (params.length >= 4) {
+                        c.drawRect(params[0], params[1], params[2], params[3], p);
+                    }
+                    break;
+                case "circle":
+                    if (params.length >= 3) {
+                        c.drawCircle(params[0], params[1], params[2], p);
+                    }
+                    break;
+                case "line":
+                    if (params.length >= 4) {
+                        c.drawLine(params[0], params[1], params[2], params[3], p);
+                    }
+                    break;
+                case "point":
+                    if (params.length >= 2) {
+                        c.drawPoint(params[0], params[1], p);
+                    }
+                    break;
+            }
+        }
         return bmp;
     }
 }

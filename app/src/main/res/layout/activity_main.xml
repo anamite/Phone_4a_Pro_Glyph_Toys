@@ -12,9 +12,10 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/nothing_black"
-        app:title="GLYPH MATRIX TOY"
+        app:title="GLYPH MO"
         app:titleTextColor="@color/nothing_white"
-        app:titleCentered="true" />
+        app:titleCentered="true"
+        app:titleTextAppearance="@style/NothingTitleText" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"

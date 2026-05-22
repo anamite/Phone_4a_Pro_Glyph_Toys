@@ -13,6 +13,8 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
 
+import com.anand.glyphgiftoy.data.CustomAnimationManager;
+import com.anand.glyphgiftoy.models.CustomAnimation;
 import com.nothing.ketchum.Glyph;
 import com.nothing.ketchum.GlyphException;
 import com.nothing.ketchum.GlyphMatrixFrame;
@@ -23,6 +25,7 @@ import com.nothing.ketchum.GlyphMatrixObject;
 public class GifGlyphToyService extends Service {
 
     public static int selectedAnimation = 0;
+    public static CustomAnimation activeCustomAnimation = null;
     public static int musicSyncAnimationIndex = 0;
     public static float musicSyncSensitivity = 1.0f;
     public static float musicSyncIntensity = 1.0f;
@@ -37,11 +40,13 @@ public class GifGlyphToyService extends Service {
     public static final String ACTION_STOP = "STOP";
     public static final String ACTION_TRIGGER_OVERRIDE = "TRIGGER_OVERRIDE";
     public static final String ACTION_SET_MODE = "SET_MODE";
+    public static final String ACTION_SET_CUSTOM_ANIM = "SET_CUSTOM_ANIM";
 
     public static final String EXTRA_ANIM_INDEX = "extra_anim_index";
     public static final String EXTRA_DURATION_SEC = "extra_duration_sec";
     public static final String EXTRA_BRIGHTNESS = "extra_brightness";
     public static final String EXTRA_SCALE = "extra_scale";
+    public static final String EXTRA_CUSTOM_ANIM_ID = "extra_custom_anim_id";
     public static final String EXTRA_MODE = "extra_mode";
     public static final String EXTRA_MUSIC_ANIM_INDEX = "extra_music_anim_index";
     public static final String EXTRA_MUSIC_SENSITIVITY = "extra_music_sensitivity";
@@ -61,6 +66,7 @@ public class GifGlyphToyService extends Service {
     private long mOverrideEndTime = 0;
     private int mOverrideBrightness = 255;
     private int mOverrideScale = 100;
+    private CustomAnimation mOverrideCustomAnim = null;
 
     private Visualizer mVisualizer;
     private byte[] mFFT;
@@ -81,6 +87,12 @@ public class GifGlyphToyService extends Service {
                 return START_NOT_STICKY;
             } else if (ACTION_TRIGGER_OVERRIDE.equals(action)) {
                 mOverrideAnim = intent.getIntExtra(EXTRA_ANIM_INDEX, 0);
+                String customId = intent.getStringExtra(EXTRA_CUSTOM_ANIM_ID);
+                if (customId != null) {
+                    mOverrideCustomAnim = CustomAnimationManager.getInstance(this).getAnimation(customId);
+                } else {
+                    mOverrideCustomAnim = null;
+                }
                 int durationSec = intent.getIntExtra(EXTRA_DURATION_SEC, 3);
                 mOverrideBrightness = intent.getIntExtra(EXTRA_BRIGHTNESS, 255);
                 mOverrideScale = intent.getIntExtra(EXTRA_SCALE, 100);
@@ -90,6 +102,11 @@ public class GifGlyphToyService extends Service {
             } else if (ACTION_SET_MODE.equals(action)) {
                 int mode = intent.getIntExtra(EXTRA_MODE, MODE_ANIMATION);
                 setMode(mode, intent);
+                return START_NOT_STICKY;
+            } else if (ACTION_SET_CUSTOM_ANIM.equals(action)) {
+                // The CustomAnimation object is usually set via the static field
+                // but we trigger a tick reset here.
+                mTick = 0;
                 return START_NOT_STICKY;
             }
         }
@@ -219,10 +236,14 @@ public class GifGlyphToyService extends Service {
                 int scale = 100;
 
                 if (System.currentTimeMillis() < mOverrideEndTime) {
-                    animToPlay = mOverrideAnim;
                     brightness = mOverrideBrightness;
                     scale = mOverrideScale;
-                    frame = mAnimGen.getFrame(animToPlay, mTick);
+                    if (mOverrideCustomAnim != null) {
+                        frame = mAnimGen.renderCustom(mOverrideCustomAnim, mTick);
+                    } else {
+                        animToPlay = mOverrideAnim;
+                        frame = mAnimGen.getFrame(animToPlay, mTick);
+                    }
                 } else if (currentMode == MODE_MUSIC_SYNC) {
                     frame = mAnimGen.animMusicSync(mFFT, musicSyncAnimationIndex, mTick, musicSyncSensitivity, musicSyncIntensity);
                 } else if (currentMode == MODE_TIMER) {
@@ -235,6 +256,8 @@ public class GifGlyphToyService extends Service {
                         float progress = 1.0f - ((float) remaining / (mTimerTotalDuration * 1000f));
                         frame = mAnimGen.animTimer(progress);
                     }
+                } else if (activeCustomAnimation != null) {
+                    frame = mAnimGen.renderCustom(activeCustomAnimation, mTick);
                 } else {
                     animToPlay = selectedAnimation;
                     frame = mAnimGen.getFrame(animToPlay, mTick);
