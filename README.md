@@ -6,11 +6,13 @@
 
 ## 📸 Screenshots
 
+## 📸 Screenshots
+
 <p align="center">
-  <img width="1260" height="2800" alt="Screenshot_20260522_122719" src="https://github.com/user-attachments/assets/b67ff156-b4b2-49dc-9fb5-d29d4e4326db" />
-  <img width="1260" height="2800" alt="Screenshot_20260522_122729" src="https://github.com/user-attachments/assets/e33aec58-ec51-40fb-a45e-90c30b87a4f0" />
-  <img width="1260" height="2800" alt="Screenshot_20260522_122741" src="https://github.com/user-attachments/assets/1c397f0e-4310-4aa2-88de-eac16830e33a" />
-  <img width="1260" height="2800" alt="Screenshot_20260522_122752" src="https://github.com/user-attachments/assets/e7179b72-958d-4bfa-a239-2242fc621d13" />
+  <img src="https://github.com/user-attachments/assets/b67ff156-b4b2-49dc-9fb5-d29d4e4326db" width="22%" />
+  <img src="https://github.com/user-attachments/assets/e33aec58-ec51-40fb-a45e-90c30b87a4f0" width="22%" />
+  <img src="https://github.com/user-attachments/assets/1c397f0e-4310-4aa2-88de-eac16830e33a" width="22%" />
+  <img src="https://github.com/user-attachments/assets/e7179b72-958d-4bfa-a239-2242fc621d13" width="22%" />
 </p>
 
 ---
