@@ -2,6 +2,7 @@
 
 **Glyph Mo** is a comprehensive Glyph Matrix control application designed exclusively for the **Nothing Phone (4a) Pro**. It allows you to harness the full power of the 13x13 LED matrix on the back of your device through custom animations, music synchronization, and intelligent notification rules.
 
+Download APK here: https://github.com/anamite/Phone_4a_Pro_Glyph_Toys/releases
 ---
 
 ## Screenshots
